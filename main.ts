@@ -10,8 +10,24 @@ export const ap= new Aprendiz("Laura", "Rodriguez Sierra", "avatar.png", 20, Niv
 console.log(ap.cursos);
 let aprendizTable: HTMLElement = document.getElementById("aprendiz")!;
 let estadisticasTable: HTMLElement= document.getElementById("estadisticas")!;
+let cursosTable:HTMLElement=document.getElementById("cursos")!;
+let btnFiltro: HTMLElement = document.getElementById("boton-filtro")!;
+let textoBusqueda:HTMLInputElement = <HTMLInputElement>document.getElementById("texto-busqueda")!;
+
+btnFiltro.onclick = ()=>{
+    
+        let text:string= textoBusqueda.value;
+        text = (text==null)?"":text;
+        cursosTable.getElementsByTagName("tbody")[0].remove();
+        let cursosFiltrados: Curso[]=ap.cursos.filter(c=>c.nombre.match(text)); 
+        mostrarCursosAprendiz(cursosFiltrados);    
+};
+
 mostrarDatoAprendiz(ap);
 mostrarEstadisticas(ap);
+mostrarCursosAprendiz(ap.cursos);
+
+
 
 function mostrarDatoAprendiz(aprendiz: Aprendiz):void{
     let tbodyAprendiz = document.createElement("tbody");
@@ -29,5 +45,23 @@ function mostrarEstadisticas(aprendiz:Aprendiz):void{
     let trElement:HTMLElement = document.createElement("tr");
     trElement.innerHTML=`<td><b>Cursos certificados</td><td>${numeroCertificados}</td>`;
     estadisticasTable.appendChild(trElement);
+}
+
+function mostrarCursosAprendiz(cursos: Curso[]):void{
+    let cursosTbody:HTMLElement=document.createElement("tbody");
+    let estado: string[] = cursos.map(c => (c.calificacion>60)?`green` : `red`);
+    let index: number =0;
+    for (let curso of cursos){
+        let trElement: HTMLElement = document.createElement("tr");
+        trElement.innerHTML=`<td>${curso.nombre}</td>
+        <td>${curso.horas}</td>
+        <td style="color:${estado[index]}">${curso.calificacion}</td>
+        <td>${curso.certificado}</td>
+        <td>${curso.anio}</td>`;
+        cursosTbody.appendChild(trElement);
+        index++;
+    }
+    
+    cursosTable.appendChild(cursosTbody);
 }
 
